@@ -1,10 +1,10 @@
 # DIY Laser Rangefinder Build
 
-A 905nm pulsed time-of-flight rangefinder targeting golf-distance ranging (200+ yards) on a non-cooperative target like a flagstick. Companion project to the OpenLaunch / LaunchLab DIY launch monitor.
+A 905nm pulsed time-of-flight rangefinder targeting golf-distance ranging (200+ yards) on a non-cooperative target like a flagstick. Companion project to [Openflight](https://github.com/jewbetcha/openflight), the DIY launch monitor.
 
 ## Architecture
 
-```
+```text
 [ESP32] ──TRIG──> [Avalanche pulser] ──> [905nm laser diode] ──> [Collimator lens] ──> Target
    │                                                                                     │
    │                                                                                     │ (return photons)
@@ -53,10 +53,12 @@ A 905nm pulsed time-of-flight rangefinder targeting golf-distance ranging (200+ 
 | Hosyond SSD1306 OLED (5-pack) | 1 | $14.99 | 0.96" 128×64 I2C display |
 
 ### Already on hand
+
 - Breadboard, jumper wires
 - Resistor and capacitor assortment
 
 ### Optional / future
+
 - Custom PCB for SiPM bias + amp + comparator (JLCPCB/OSHPark, ~$5)
 - Panel-mount momentary button for enclosure (~$8)
 - Thorlabs LA1131 AR-coated 50mm lens (~$30) if range-limited
@@ -72,6 +74,7 @@ A 905nm pulsed time-of-flight rangefinder targeting golf-distance ranging (200+ 
 Each subsystem gets validated independently. Bringing it all up at once is how you brick parts.
 
 #### 1a. Bias supply
+
 - Wire XL6009 to 18650 + holder
 - Adjust trim pot to **28.0V** with multimeter on output
 - Add RC filter: 1kΩ + 10µF tantalum + 100nF ceramic at output
@@ -79,6 +82,7 @@ Each subsystem gets validated independently. Bringing it all up at once is how y
 - **Do not connect SiPM yet**
 
 #### 1b. Laser pulser
+
 - Build 2N3904 avalanche pulser circuit on breadboard
 - Use a **photodiode + oscilloscope** (or a fast scope alone) to verify pulse shape
 - Target: ~50ns pulse width, clean rising edge
@@ -87,6 +91,7 @@ Each subsystem gets validated independently. Bringing it all up at once is how y
 - Record pulse repetition rate — keep duty cycle < 0.1% for thermal + eye-safety margin
 
 #### 1c. SiPM + amp + comparator chain
+
 - Power SiPM at 27V via the RC-filtered bias supply
 - AC-couple fast output through 100pF cap to GALI-5+ input
 - GALI-5+ output → TLV3501 comparator
@@ -95,6 +100,7 @@ Each subsystem gets validated independently. Bringing it all up at once is how y
 - **Bias must be OFF whenever soldering or rewiring near the SiPM** — one mistake = $100 part
 
 #### 1d. ESP32 + TDC + display
+
 - Wire TDC Click to ESP32 over SPI
 - Wire SSD1306 OLED over I2C
 - Wire button to GPIO with internal pull-up enabled
@@ -121,6 +127,7 @@ Once electronics work, the optics determine whether you can actually hit a flag 
 - Measure noise floor — single-photon dark counts will set your minimum detectable signal
 
 ### Phase 4: Field testing
+
 - Test on a flagstick at a driving range, starting at 50 yards and working out
 - Compare against a known-good commercial unit (Bushnell, Garmin) for ground truth
 - Log measurements over BLE to phone for analysis
@@ -131,6 +138,7 @@ Once electronics work, the optics determine whether you can actually hit a flag 
 ## Critical Safety Notes
 
 ### Eye safety
+
 - 905nm is **invisible** — no blink reflex. Treat the laser as live whenever powered, even if you can't see anything.
 - Class 1 eye-safe operation requires keeping average power low. The math: peak power × pulse width × repetition rate = average power.
 - At 25W peak, 50ns pulse, 1kHz rep rate: average power = 25 × 50e-9 × 1000 = 1.25 mW. Class 1 limit at 905nm is ~0.78 mW for accessible emission, but tight collimation (small beam divergence) can be considered, and pulsed exposure has separate MPE calculations.
@@ -139,12 +147,14 @@ Once electronics work, the optics determine whether you can actually hit a flag 
 - Wear OD4+ 905nm-rated safety goggles during bench testing
 
 ### Battery safety
+
 - Charge 18650s on a non-flammable surface (ceramic plate, cookie sheet)
 - Don't leave charging unattended on first few cycles
 - If a cell warms up during charge or discharge, stop immediately
 - TEKOWEE cells are unverified — capacity rating may be inflated. For long-term reliability, replace with Samsung 30Q or Molicel P26A from 18650batterystore.com.
 
 ### SiPM survival
+
 - Keep bias OFF when soldering, rewiring, or probing
 - One overvoltage event = dead $100 part
 - Always bring up bias supply slowly, verify voltage with meter before connecting

@@ -10,7 +10,7 @@ See `../docs/flashing.md` for build and flash instructions.
 
 ## Layout
 
-```
+```text
 firmware/
   openscan/                    # Arduino sketch directory (matches .ino name)
     openscan.ino               # entry point: setup() + loop()

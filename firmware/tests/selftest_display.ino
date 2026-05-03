@@ -16,7 +16,8 @@ void setup() {
   Wire.begin(PIN_SDA, PIN_SCL);
   if (!oled.begin(SSD1306_SWITCHCAPVCC, I2C_ADDR)) {
     Serial.println("oled init failed");
-    while (true) delay(1000);
+    while (true)
+      delay(1000);
   }
   oled.clearDisplay();
   oled.setTextColor(SSD1306_WHITE);

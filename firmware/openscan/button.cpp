@@ -6,7 +6,7 @@ bool last_stable = false;
 bool last_raw = false;
 uint32_t last_change_ms = 0;
 bool edge_pending = false;
-}
+}  // namespace
 
 void button_begin() {
   pinMode(cfg::PIN_BUTTON, INPUT_PULLUP);
@@ -24,7 +24,8 @@ static void update() {
   }
   if ((now - last_change_ms) >= cfg::BUTTON_DEBOUNCE_MS && raw != last_stable) {
     last_stable = raw;
-    if (raw) edge_pending = true;
+    if (raw)
+      edge_pending = true;
   }
 }
 

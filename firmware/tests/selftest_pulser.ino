@@ -9,9 +9,9 @@
 // This sketch fires once per second by default. Verify pulse shape on a
 // fast scope (50 ohm into ~50 ns pulse width, clean rising edge).
 
-constexpr uint8_t  PIN_TRIG     = 25;
-constexpr uint16_t PULSE_US     = 1;     // GPIO high time; pulser shapes the optical pulse
-constexpr uint32_t PERIOD_MS    = 1000;  // 1 Hz rep rate for safety during bring-up
+constexpr uint8_t PIN_TRIG = 25;
+constexpr uint16_t PULSE_US = 1;      // GPIO high time; pulser shapes the optical pulse
+constexpr uint32_t PERIOD_MS = 1000;  // 1 Hz rep rate for safety during bring-up
 
 void setup() {
   Serial.begin(115200);

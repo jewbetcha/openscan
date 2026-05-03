@@ -5,8 +5,8 @@ Guidance for Claude / agentic assistants working in this repository.
 ## Project: openscan
 
 A DIY 905nm pulsed time-of-flight laser rangefinder targeting golf-distance ranging
-(200+ yards) on a non-cooperative target like a flagstick. Companion project to the
-OpenLaunch / LaunchLab DIY launch monitor.
+(200+ yards) on a non-cooperative target like a flagstick. Companion project to
+[Openflight](https://github.com/jewbetcha/openflight), the DIY launch monitor.
 
 The full hardware build plan, BOM, safety notes, and open questions live in
 `rangefinder_build.md`. That document is the source of truth for the hardware
@@ -26,7 +26,7 @@ design — read it before doing anything substantive in this repo.
 
 ## System architecture
 
-```
+```text
 [ESP32] --TRIG--> [Avalanche pulser] --> [905nm laser diode] --> [Collimator] --> Target
    |                                                                                |
    |                                                                                v
@@ -75,6 +75,7 @@ comparator, and stop the TDC. Distance = (time x c) / 2. ~1 yard accuracy needs
    compare against a commercial unit.
 
 Pre-parts work the agent can do today:
+
 - Read OSRAM SPL PL90_3 Range Finder app note for the avalanche pulser topology.
 - Read Onsemi MicroFC datasheet (fast-output pin, bias / overvoltage specs).
 - Read TI TDC7200 datasheet (Mode 1 vs Mode 2, edge timing).
@@ -83,7 +84,7 @@ Pre-parts work the agent can do today:
 
 ## Repo layout
 
-```
+```text
 openscan/
   README.md                  # placeholder
   rangefinder_build.md       # hardware build plan, BOM, safety, risks
@@ -164,6 +165,7 @@ These come from `rangefinder_build.md`. They are not optional and must be
 respected in any code, doc, or procedural change suggested.
 
 ### Eye safety (905 nm is invisible — no blink reflex)
+
 - Treat the laser as live whenever powered.
 - Run the IEC 60825-1 eye-safety math (peak power x pulse width x rep rate, plus
   pulsed MPE) before pointing the device at any human-accessible zone.
@@ -172,11 +174,13 @@ respected in any code, doc, or procedural change suggested.
 - Aim into a beam dump or far wall during pulser testing.
 
 ### SiPM survival
+
 - Bias OFF whenever soldering, rewiring, or probing near the SiPM.
 - Bring bias up slowly and verify with a meter before connecting the SiPM.
 - One overvoltage event = dead $100 part.
 
 ### Battery safety
+
 - Charge 18650s on a non-flammable surface; do not leave unattended initially.
 - If a cell warms during charge or discharge, stop immediately.
 - TEKOWEE cells are unverified; prefer Samsung 30Q or Molicel P26A long-term.

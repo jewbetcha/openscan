@@ -17,9 +17,11 @@ have the driver out of the box.
 1. Plug the ESP32 in with a known-good **data** USB-C cable (charge-only cables
    are a common time sink).
 2. In a terminal, list serial devices:
+
    ```sh
    ls /dev/cu.*
    ```
+
 3. If you see something like `/dev/cu.usbserial-XXXX` or `/dev/cu.SLAB_USBtoUART`,
    you're good. If not:
    - **CP210x (Silicon Labs):** download the driver from
@@ -35,9 +37,11 @@ have the driver out of the box.
 1. Download the Arduino IDE 2.x: <https://www.arduino.cc/en/software>
 2. Open **Settings** (`Cmd+,`).
 3. In **Additional boards manager URLs**, paste:
-   ```
+
+   ```text
    https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
+
 4. Open **Tools -> Board -> Boards Manager**, search "esp32", install
    **esp32 by Espressif Systems** (latest 3.x).
 5. Open **Tools -> Board -> esp32**, pick **ESP32 Dev Module**.
@@ -76,7 +80,7 @@ The TDC7200 driver is in-tree (`firmware/openscan/tdc.cpp`) — no library to in
 Arduino IDE expects the sketch folder name to match the `.ino` file name. The
 repo already follows this:
 
-```
+```text
 firmware/openscan/openscan.ino   <- open this file
 ```
 

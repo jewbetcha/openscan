@@ -21,13 +21,15 @@ RangeResult rangefinder_measure() {
     pulser_fire();
     if (tdc_wait_for_done(cfg::MEASUREMENT_TIMEOUT_MS * 1000UL)) {
       TdcResult r = tdc_read();
-      if (r.ok) samples[n++] = r.ticks;
+      if (r.ok)
+        samples[n++] = r.ticks;
     }
     delayMicroseconds(cfg::INTER_SHOT_US);
   }
 
   out.hits = n;
-  if (n < (cfg::SHOTS_PER_MEASUREMENT / 4)) return out;
+  if (n < (cfg::SHOTS_PER_MEASUREMENT / 4))
+    return out;
 
   std::sort(samples, samples + n);
   uint32_t median = samples[n / 2];

@@ -8,7 +8,7 @@
 namespace {
 Adafruit_SSD1306 oled(cfg::OLED_WIDTH, cfg::OLED_HEIGHT, &Wire, -1);
 bool ready = false;
-}
+}  // namespace
 
 void display_begin() {
   Wire.begin(cfg::PIN_OLED_SDA, cfg::PIN_OLED_SCL);
@@ -26,7 +26,8 @@ void display_begin() {
 }
 
 void display_show_message(const char* msg) {
-  if (!ready) return;
+  if (!ready)
+    return;
   oled.clearDisplay();
   oled.setTextSize(2);
   oled.setCursor(0, 16);
@@ -35,7 +36,8 @@ void display_show_message(const char* msg) {
 }
 
 void display_show_distance_yards(float yards) {
-  if (!ready) return;
+  if (!ready)
+    return;
   oled.clearDisplay();
   oled.setTextSize(3);
   oled.setCursor(0, 8);
@@ -47,7 +49,8 @@ void display_show_distance_yards(float yards) {
 }
 
 void display_show_raw_ticks(uint32_t ticks) {
-  if (!ready) return;
+  if (!ready)
+    return;
   oled.clearDisplay();
   oled.setTextSize(1);
   oled.setCursor(0, 0);
