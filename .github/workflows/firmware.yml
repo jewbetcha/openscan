@@ -1,0 +1,104 @@
+name: firmware
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  FQBN: esp32:esp32:esp32
+
+jobs:
+  format:
+    name: clang-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+
+      - name: Check formatting
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find firmware -type f \( -name '*.h' -o -name '*.cpp' -o -name '*.ino' \))
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "no firmware sources found"
+            exit 0
+          fi
+          clang-format --dry-run --Werror "${files[@]}"
+
+  cppcheck:
+    name: cppcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck
+        run: |
+          cppcheck \
+            --enable=warning,style,performance,portability \
+            --inline-suppr \
+            --suppress=missingIncludeSystem \
+            --suppress=unusedFunction \
+            --suppress=unmatchedSuppression \
+            --suppress=*:firmware/tests/* \
+            --error-exitcode=1 \
+            --std=c++17 \
+            --language=c++ \
+            -I firmware/openscan \
+            firmware/openscan
+
+  compile:
+    name: compile (${{ matrix.sketch }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sketch:
+          - firmware/openscan
+          - firmware/tests/selftest_display
+          - firmware/tests/selftest_button
+          - firmware/tests/selftest_tdc
+          - firmware/tests/selftest_pulser
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage selftest sketches
+        run: |
+          set -euo pipefail
+          for ino in firmware/tests/*.ino; do
+            base="$(basename "$ino" .ino)"
+            mkdir -p "firmware/tests/${base}"
+            mv "$ino" "firmware/tests/${base}/${base}.ino"
+          done
+
+      - name: Install arduino-cli
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Install ESP32 core
+        run: |
+          arduino-cli config init --overwrite
+          arduino-cli config add board_manager.additional_urls \
+            https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32
+
+      - name: Install libraries
+        run: |
+          arduino-cli lib install "Adafruit SSD1306"
+          arduino-cli lib install "Adafruit GFX Library"
+
+      - name: Compile ${{ matrix.sketch }}
+        run: |
+          arduino-cli compile --warnings more --fqbn "$FQBN" "${{ matrix.sketch }}"

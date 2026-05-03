@@ -131,6 +131,20 @@ The TDC7200 driver is hand-rolled in `firmware/openscan/tdc.cpp` against the TI
 datasheet — keep it that way; we want explicit control over Mode 1 vs Mode 2,
 calibration cycles, and edge timing.
 
+## CI
+
+Two GitHub Actions workflows run on push to `main` and on every PR:
+
+- **`.github/workflows/firmware.yml`**
+  - `clang-format` — dry-run check against `.clang-format` (Google base, 2-space, 100 col).
+  - `cppcheck` — warning/style/performance/portability, `--error-exitcode=1`, std=c++17, scoped to `firmware/openscan`.
+  - `compile` (matrix) — `arduino-cli compile --fqbn esp32:esp32:esp32` for the main sketch and every selftest. The job stages each `firmware/tests/*.ino` into a same-named subfolder before compiling because Arduino requires that layout.
+- **`.github/workflows/docs.yml`**
+  - `markdownlint` against `.markdownlint.json` (line-length and HTML rules disabled to keep the build doc readable).
+  - `markdown-link-check` against every `*.md`, configured in `.github/markdown-link-check.json` (treats 403/429 as alive to avoid flakes from datasheet hosts).
+
+When adding a new selftest sketch, drop it under `firmware/tests/` as `selftest_<name>.ino` and add the matching matrix entry in `firmware/.github/workflows/firmware.yml`. When adding a new firmware module, no workflow change is needed — `cppcheck` and the main-sketch compile pick it up automatically.
+
 ## Working conventions
 
 - Treat `rangefinder_build.md` as authoritative for hardware decisions. If a change
